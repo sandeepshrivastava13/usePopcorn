@@ -4,7 +4,11 @@ export default function MovieList({ movieData, setMovieId }) {
   return (
     <ul className="list list-movies">
       {movieData.map((movie) => (
-        <li onClick={() => setMovieId(movie.imdbID)}>
+        <li
+          onClick={() => {
+            setMovieId(movie.imdbID);
+          }}
+        >
           <img src={movie.Poster} alt="movie" />
           <h3>{movie.Title}</h3>
           <div>
