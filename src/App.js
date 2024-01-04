@@ -64,7 +64,7 @@ function ErrorMessage(props) {
 }
 
 function App() {
-  const [query, setQuery] = React.useState("");
+  const [query, setQuery] = React.useState("interstellar");
   const [movies, setMovies] = React.useState([]);
   const [watched, setWatched] = React.useState([]);
   const [selectedId, setSelectedId] = React.useState(null);
@@ -74,13 +74,15 @@ function App() {
 
   React.useEffect(
     function () {
+      const controller = new AbortController();
       async function fetchMovies() {
         try {
           setIsLoading(true);
           setError("");
 
           const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`
+            `http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`,
+            { signal: controller.signal }
           );
           if (!res.ok) {
             throw new Error("Something went wrong with fetching movies..");
@@ -116,6 +118,19 @@ function App() {
     setSelectedId(id);
   }
 
+  function handleCloseMovie() {
+    setSelectedId(null);
+  }
+
+  function handleAddWatched(movie) {
+    setWatched((watched) => [...watched, movie]);
+  }
+
+  function handleDeleteWatched(id) {
+    const filtereArray = watched.filter((movie) => movie.imdbID !== id);
+    setWatched(filtereArray);
+  }
+
   return (
     <div className="App">
       <NavBar result={movies.length} setMovieQuery={setMovieQuery} />
@@ -129,11 +144,19 @@ function App() {
         </Box>
         <Box>
           {selectedId ? (
-            <MovieDetail id={selectedId} />
+            <MovieDetail
+              id={selectedId}
+              handleAddWatched={handleAddWatched}
+              handleCloseMovie={handleCloseMovie}
+              watched={watched}
+            />
           ) : (
             <>
               <WatchedSummary watched={watched} />
-              <WatchedMovieList watched={watched} />
+              <WatchedMovieList
+                watched={watched}
+                handleDeleteWatched={handleDeleteWatched}
+              />
             </>
           )}
         </Box>
