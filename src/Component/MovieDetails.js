@@ -2,7 +2,7 @@ import React from "react";
 
 const API_KEY = "138757a0";
 
-function MovieDetail({ id }) {
+function MovieDetail({ id, handleCloseMovie, handleAddWatched, watched }) {
   const [singleMovieDetail, setSingleMovieDetail] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -31,7 +31,35 @@ function MovieDetail({ id }) {
     Runtime,
     imdbRating,
     Released,
+    Year,
   } = { ...singleMovieDetail };
+
+  React.useEffect(
+    function () {
+      document.title = `MOVIE | ${title}`;
+      return function () {
+        document.title = "usePopcorn";
+      };
+    },
+    [title]
+  );
+
+  function onHandleAddWatched() {
+    const newWatchedMovie = {
+      Title: title,
+      Poster: poster,
+      imdbID: id,
+      Year,
+      imdbRating: Number(imdbRating),
+      Released,
+      runtime: Number(Runtime.split(" ").at(0)),
+    };
+    handleAddWatched(newWatchedMovie);
+    handleCloseMovie();
+  }
+
+  const isWatched = watched.map((movie) => movie.imdbID).includes(id);
+
   return (
     <div className="details">
       {isLoading ? (
@@ -39,6 +67,9 @@ function MovieDetail({ id }) {
       ) : (
         <>
           <header>
+            <button className="btn-back" onClick={() => handleCloseMovie()}>
+              &larr;
+            </button>
             <img src={poster} alt="movie" className="img" />
             <div className="details-overview">
               <h2>{title}</h2>
@@ -52,6 +83,15 @@ function MovieDetail({ id }) {
               </p>
             </div>
           </header>
+          <div className="rating">
+            {isWatched ? (
+              <p>This content is already watched</p>
+            ) : (
+              <button className="btn-add" onClick={() => onHandleAddWatched()}>
+                Add to list
+              </button>
+            )}
+          </div>
           <section>
             <p>
               <em>{plot}</em>
