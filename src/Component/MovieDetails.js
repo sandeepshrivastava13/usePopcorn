@@ -44,6 +44,21 @@ function MovieDetail({ id, handleCloseMovie, handleAddWatched, watched }) {
     [title]
   );
 
+  React.useEffect(
+    function () {
+      function callback(e) {
+        if (e.code === "Backspace") {
+          handleCloseMovie();
+        }
+      }
+      document.addEventListener("keydown", callback);
+      return function () {
+        document.removeEventListener("keydown", callback);
+      };
+    },
+    [handleCloseMovie]
+  );
+
   function onHandleAddWatched() {
     const newWatchedMovie = {
       Title: title,
