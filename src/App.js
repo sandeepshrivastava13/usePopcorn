@@ -64,7 +64,7 @@ function ErrorMessage(props) {
 }
 
 function App() {
-  const [query, setQuery] = React.useState("interstellar");
+  const [query, setQuery] = React.useState("");
   const [movies, setMovies] = React.useState([]);
   const [watched, setWatched] = React.useState([]);
   const [selectedId, setSelectedId] = React.useState(null);
@@ -112,6 +112,7 @@ function App() {
 
   function setMovieQuery(qry) {
     setQuery(qry);
+    handleCloseMovie();
   }
 
   function setMovieId(id) {
